@@ -8,7 +8,7 @@ from parameterized import parameterized, parameterized_class
 from unittest.mock import patch, PropertyMock
 
 from client import GithubOrgClient
-from fixtures import org_payload, repos_payload, expected_repos, apache2_repos
+import fixtures
 
 
 class MockResponse:
@@ -101,11 +101,14 @@ class TestGithubOrgClient(unittest.TestCase):
         result = GithubOrgClient.has_license(repo, license_key)
         self.assertEqual(result, expected)
 
-
-@parameterized_class(
-    ("org_payload", "repos_payload", "expected_repos", "apache2_repos"),
-    [(org_payload, repos_payload, expected_repos, apache2_repos)]
-)
+@parameterized_class([
+    {
+        "org_payload": fixtures.TEST_PAYLOAD[0][0],
+        "repos_payload": fixtures.TEST_PAYLOAD[0][1],
+        "expected_repos": fixtures.TEST_PAYLOAD[0][2],
+        "apache2_repos": fixtures.TEST_PAYLOAD[0][3]
+        }
+])
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """Integration tests for GithubOrgClient.public_repos"""
 
