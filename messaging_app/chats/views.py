@@ -1,4 +1,4 @@
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, permissions, status, filters
 from rest_framework.response import Response
 from .models import Conversation, Message, User
 from .serializers import ConversationSerializer, MessageSerializer
@@ -10,7 +10,8 @@ class ConversationViewSet(viewsets.ModelViewSet):
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
     permission_classes = [permissions.IsAuthenticated]
-
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['participants__first_name', 'participants__last_name', 'participants__email']
     def create(self, request, *args, **kwargs):
         """
         Create a new conversation with participants.
@@ -36,6 +37,8 @@ class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['message_body', 'sender__first_name', 'sender__last_name']
 
     def create(self, request, *args, **kwargs):
         """
