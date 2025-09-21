@@ -1,3 +1,67 @@
-from django.shortcuts import render
+from rest_framework import viewsets, permissions, status
+from rest_framework.response import Response
+from .models import Conversation, Message, User
+from .serializers import ConversationSerializer, MessageSerializer
 
-# Create your views here.
+class ConversationViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for listing and creating conversations.
+    """
+    queryset = Conversation.objects.all()
+    serializer_class = ConversationSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        """
+        Create a new conversation with participants.
+        Expecting `participants` as a list of user IDs in request.data.
+        """
+        participant_ids = request.data.get("participants", [])
+        if not participant_ids or not isinstance(participant_ids, list):
+            return Response({"error": "Participants must be provided as a list of user IDs."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        conversation = Conversation.objects.create()
+        users = User.objects.filter(user_id__in=participant_ids)
+        conversation.participants.set(users)
+        conversation.save()
+
+        serializer = self.get_serializer(conversation)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+class MessageViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for listing and sending messages in a conversation.
+    """
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        """
+        Send a message in a conversation.
+        Expecting `conversation` (UUID) and `message_body` in request.data.
+        """
+        conversation_id = request.data.get("conversation")
+        message_body = request.data.get("message_body", "").strip()
+
+        if not conversation_id:
+            return Response({"error": "Conversation ID is required."},
+                            status=status.HTTP_400_BAD_REQUEST)
+        if not message_body:
+            return Response({"error": "Message body cannot be empty."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            conversation = Conversation.objects.get(conversation_id=conversation_id)
+        except Conversation.DoesNotExist:
+            return Response({"error": "Conversation not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        message = Message.objects.create(
+            conversation=conversation,
+            sender=request.user,
+            message_body=message_body
+        )
+
+        serializer = self.get_serializer(message)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
