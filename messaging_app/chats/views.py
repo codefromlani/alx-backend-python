@@ -2,6 +2,7 @@ from rest_framework import viewsets, permissions, status, filters
 from rest_framework.response import Response
 from .models import Conversation, Message, User
 from .serializers import ConversationSerializer, MessageSerializer
+from .permissions import IsParticipantOfConversation
 
 class ConversationViewSet(viewsets.ModelViewSet):
     """
@@ -9,7 +10,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
     """
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsParticipantOfConversation]
     filter_backends = [filters.SearchFilter]
     search_fields = ['participants__first_name', 'participants__last_name', 'participants__email']
     def create(self, request, *args, **kwargs):
@@ -25,7 +26,8 @@ class ConversationViewSet(viewsets.ModelViewSet):
         conversation = Conversation.objects.create()
         users = User.objects.filter(user_id__in=participant_ids)
         conversation.participants.set(users)
-        conversation.save()
+
+        conversation.participants.add(request.user)
 
         serializer = self.get_serializer(conversation)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -36,7 +38,7 @@ class MessageViewSet(viewsets.ModelViewSet):
     """
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsParticipantOfConversation]
     filter_backends = [filters.SearchFilter]
     search_fields = ['message_body', 'sender__first_name', 'sender__last_name']
 
@@ -59,6 +61,10 @@ class MessageViewSet(viewsets.ModelViewSet):
             conversation = Conversation.objects.get(conversation_id=conversation_id)
         except Conversation.DoesNotExist:
             return Response({"error": "Conversation not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        if request.user not in conversation.participants.all():
+            return Response({"error": "You are not a participant in this conversation."},
+                            status=status.HTTP_403_FORBIDDEN)
 
         message = Message.objects.create(
             conversation=conversation,
