@@ -4,15 +4,20 @@ from .models import Conversation, Message, User
 from .serializers import ConversationSerializer, MessageSerializer
 from .permissions import IsParticipantOfConversation
 
+
 class ConversationViewSet(viewsets.ModelViewSet):
     """
     ViewSet for listing and creating conversations.
     """
-    queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
     permission_classes = [permissions.IsAuthenticated, IsParticipantOfConversation]
     filter_backends = [filters.SearchFilter]
     search_fields = ['participants__first_name', 'participants__last_name', 'participants__email']
+
+    def get_queryset(self):
+        # Only return conversations where the user is a participant
+        return Conversation.objects.filter(participants=self.request.user)
+
     def create(self, request, *args, **kwargs):
         """
         Create a new conversation with participants.
@@ -20,27 +25,34 @@ class ConversationViewSet(viewsets.ModelViewSet):
         """
         participant_ids = request.data.get("participants", [])
         if not participant_ids or not isinstance(participant_ids, list):
-            return Response({"error": "Participants must be provided as a list of user IDs."},
-                            status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Participants must be provided as a list of user IDs."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         conversation = Conversation.objects.create()
         users = User.objects.filter(user_id__in=participant_ids)
         conversation.participants.set(users)
 
+        # Always include the creator
         conversation.participants.add(request.user)
 
         serializer = self.get_serializer(conversation)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+
 class MessageViewSet(viewsets.ModelViewSet):
     """
     ViewSet for listing and sending messages in a conversation.
     """
-    queryset = Message.objects.all()
     serializer_class = MessageSerializer
     permission_classes = [permissions.IsAuthenticated, IsParticipantOfConversation]
     filter_backends = [filters.SearchFilter]
     search_fields = ['message_body', 'sender__first_name', 'sender__last_name']
+
+    def get_queryset(self):
+        # Only return messages in conversations where the user is a participant
+        return Message.objects.filter(conversation__participants=self.request.user)
 
     def create(self, request, *args, **kwargs):
         """
