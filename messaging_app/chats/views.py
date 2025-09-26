@@ -1,8 +1,11 @@
 from rest_framework import viewsets, permissions, status, filters
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from .models import Conversation, Message, User
 from .serializers import ConversationSerializer, MessageSerializer
 from .permissions import IsParticipantOfConversation
+from .pagination import MessagePagination
+from .filters import MessageFilter
 
 
 class ConversationViewSet(viewsets.ModelViewSet):
@@ -47,7 +50,9 @@ class MessageViewSet(viewsets.ModelViewSet):
     """
     serializer_class = MessageSerializer
     permission_classes = [permissions.IsAuthenticated, IsParticipantOfConversation]
-    filter_backends = [filters.SearchFilter]
+    pagination_class = MessagePagination
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+    filterset_class = MessageFilter
     search_fields = ['message_body', 'sender__first_name', 'sender__last_name']
 
     def get_queryset(self):
