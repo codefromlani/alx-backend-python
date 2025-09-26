@@ -64,7 +64,7 @@ class MessageViewSet(viewsets.ModelViewSet):
         Send a message in a conversation.
         Expecting `conversation` (UUID) and `message_body` in request.data.
         """
-        conversation_id = request.data.get("conversation")
+        conversation_id = kwargs.get('conversation_pk')
         message_body = request.data.get("message_body", "").strip()
 
         if not conversation_id:
