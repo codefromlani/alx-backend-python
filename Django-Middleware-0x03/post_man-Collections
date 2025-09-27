@@ -1,0 +1,522 @@
+{
+	"info": {
+		"_postman_id": "16c251a8-f502-4dad-b1a2-b22255784654",
+		"name": "messaging_app",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "42687638"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"admin@example.com\",\r\n  \"password\": \"adminpassword\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/token/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"token",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Conversations",
+			"item": [
+				{
+					"name": "Create a Conversation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU4OTIzNzkwLCJpYXQiOjE3NTg5MjM0OTAsImp0aSI6IjUxYTg4MmNiNzc0MzRlMTBhNzU1YjU3OWUzNDQ0OWE0IiwidXNlcl9pZCI6ImQ5ZWQ1ZGU3LTUyYzItNDEzZi04MzYyLTRhNTBjOWRkMmMxYSJ9.foQABL9n_q0h8PSXp-Sy9UozTjCXytGvh9PflNB8YIA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"participants\": [\"755aa4d7eaff49b7981cebbe924227b8\"]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/conversations/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"conversations",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success-response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"participants\": [\"755aa4d7eaff49b7981cebbe924227b8\"]\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/conversations/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"conversations",
+										""
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 26 Sep 2025 21:55:58 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.12.3"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept"
+								},
+								{
+									"key": "Allow",
+									"value": "GET, POST, HEAD, OPTIONS"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "522"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"conversation_id\": \"a099df10-687e-4848-bb48-f071ed658752\",\n    \"participants\": [\n        {\n            \"user_id\": \"755aa4d7-eaff-49b7-981c-ebbe924227b8\",\n            \"first_name\": \"Bob\",\n            \"last_name\": \"Smith\",\n            \"email\": \"bob@example.com\",\n            \"phone_number\": null,\n            \"role\": \"host\",\n            \"created_at\": \"2025-09-21T11:18:36.741120Z\"\n        },\n        {\n            \"user_id\": \"d9ed5de7-52c2-413f-8362-4a50c9dd2c1a\",\n            \"first_name\": \"Admin\",\n            \"last_name\": \"User\",\n            \"email\": \"admin@example.com\",\n            \"phone_number\": null,\n            \"role\": \"admin\",\n            \"created_at\": \"2025-09-21T10:27:24.863348Z\"\n        }\n    ],\n    \"messages\": [],\n    \"created_at\": \"2025-09-26T21:55:58.327794Z\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Fetch Conversations",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU4OTI1NTg3LCJpYXQiOjE3NTg5MjUyODcsImp0aSI6IjBkYjU3M2ZlMThhMTQzMWNhNWU0NjkxZmQ5ZWY5YWNkIiwidXNlcl9pZCI6ImQ5ZWQ1ZGU3LTUyYzItNDEzZi04MzYyLTRhNTBjOWRkMmMxYSJ9.w-sbzil9AQtP7rotRjte39v0PExN7HGzaSFnUIHd_Ic",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/conversations/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"conversations",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success-response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/conversations/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"conversations",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 26 Sep 2025 22:21:50 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.12.3"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept"
+								},
+								{
+									"key": "Allow",
+									"value": "GET, POST, HEAD, OPTIONS"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "955"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"count\": 1,\n    \"next\": null,\n    \"previous\": null,\n    \"results\": [\n        {\n            \"conversation_id\": \"a099df10-687e-4848-bb48-f071ed658752\",\n            \"participants\": [\n                {\n                    \"user_id\": \"755aa4d7-eaff-49b7-981c-ebbe924227b8\",\n                    \"first_name\": \"Bob\",\n                    \"last_name\": \"Smith\",\n                    \"email\": \"bob@example.com\",\n                    \"phone_number\": null,\n                    \"role\": \"host\",\n                    \"created_at\": \"2025-09-21T11:18:36.741120Z\"\n                },\n                {\n                    \"user_id\": \"d9ed5de7-52c2-413f-8362-4a50c9dd2c1a\",\n                    \"first_name\": \"Admin\",\n                    \"last_name\": \"User\",\n                    \"email\": \"admin@example.com\",\n                    \"phone_number\": null,\n                    \"role\": \"admin\",\n                    \"created_at\": \"2025-09-21T10:27:24.863348Z\"\n                }\n            ],\n            \"messages\": [\n                {\n                    \"message_id\": \"5114bb80-0d96-47fb-8dbf-c15fe92883e6\",\n                    \"conversation\": \"a099df10-687e-4848-bb48-f071ed658752\",\n                    \"sender\": {\n                        \"user_id\": \"d9ed5de7-52c2-413f-8362-4a50c9dd2c1a\",\n                        \"first_name\": \"Admin\",\n                        \"last_name\": \"User\",\n                        \"email\": \"admin@example.com\",\n                        \"phone_number\": null,\n                        \"role\": \"admin\",\n                        \"created_at\": \"2025-09-21T10:27:24.863348Z\"\n                    },\n                    \"message_body\": \"Hello Bob!\",\n                    \"sent_at\": \"2025-09-26T22:11:54.020064Z\"\n                }\n            ],\n            \"created_at\": \"2025-09-26T21:55:58.327794Z\"\n        }\n    ]\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Messages",
+			"item": [
+				{
+					"name": "Send a Message",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU4OTI0NzQ1LCJpYXQiOjE3NTg5MjQ0NDUsImp0aSI6Ijk4NjAwNGY2NjdmODRhMDBiZjY1YjE2ODM4Y2EwNzczIiwidXNlcl9pZCI6ImQ5ZWQ1ZGU3LTUyYzItNDEzZi04MzYyLTRhNTBjOWRkMmMxYSJ9.O6WlYYCld5FGjxRsPS08aaim6ig5MarkOjI19kbf4T4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"message_body\": \"Hello Bob!\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/conversations/a099df10-687e-4848-bb48-f071ed658752/messages/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"conversations",
+								"a099df10-687e-4848-bb48-f071ed658752",
+								"messages",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success-response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"message_body\": \"Hello Bob!\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/conversations/a099df10-687e-4848-bb48-f071ed658752/messages/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"conversations",
+										"a099df10-687e-4848-bb48-f071ed658752",
+										"messages",
+										""
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 26 Sep 2025 22:11:54 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.12.3"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept"
+								},
+								{
+									"key": "Allow",
+									"value": "GET, POST, HEAD, OPTIONS"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "381"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message_id\": \"5114bb80-0d96-47fb-8dbf-c15fe92883e6\",\n    \"conversation\": \"a099df10-687e-4848-bb48-f071ed658752\",\n    \"sender\": {\n        \"user_id\": \"d9ed5de7-52c2-413f-8362-4a50c9dd2c1a\",\n        \"first_name\": \"Admin\",\n        \"last_name\": \"User\",\n        \"email\": \"admin@example.com\",\n        \"phone_number\": null,\n        \"role\": \"admin\",\n        \"created_at\": \"2025-09-21T10:27:24.863348Z\"\n    },\n    \"message_body\": \"Hello Bob!\",\n    \"sent_at\": \"2025-09-26T22:11:54.020064Z\"\n}"
+						}
+					]
+				},
+				{
+					"name": "List messages",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU4OTI1MjA2LCJpYXQiOjE3NTg5MjQ5MDYsImp0aSI6ImQ3Njg1ZDEyYzY3YjQxNmE4MDlkMmExYmJhYjdiOTg3IiwidXNlcl9pZCI6ImQ5ZWQ1ZGU3LTUyYzItNDEzZi04MzYyLTRhNTBjOWRkMmMxYSJ9.oMmXfGdUkn6GNXGR5gvmuZhaVzG3y-fvg7R3CAUZQCI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/conversations/a099df10-687e-4848-bb48-f071ed658752/messages/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"conversations",
+								"a099df10-687e-4848-bb48-f071ed658752",
+								"messages",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success-response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://127.0.0.1:8000/api/conversations/a099df10-687e-4848-bb48-f071ed658752/messages/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"conversations",
+										"a099df10-687e-4848-bb48-f071ed658752",
+										"messages",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 26 Sep 2025 22:15:31 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.12.3"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept"
+								},
+								{
+									"key": "Allow",
+									"value": "GET, POST, HEAD, OPTIONS"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "433"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"count\": 1,\n    \"next\": null,\n    \"previous\": null,\n    \"results\": [\n        {\n            \"message_id\": \"5114bb80-0d96-47fb-8dbf-c15fe92883e6\",\n            \"conversation\": \"a099df10-687e-4848-bb48-f071ed658752\",\n            \"sender\": {\n                \"user_id\": \"d9ed5de7-52c2-413f-8362-4a50c9dd2c1a\",\n                \"first_name\": \"Admin\",\n                \"last_name\": \"User\",\n                \"email\": \"admin@example.com\",\n                \"phone_number\": null,\n                \"role\": \"admin\",\n                \"created_at\": \"2025-09-21T10:27:24.863348Z\"\n            },\n            \"message_body\": \"Hello Bob!\",\n            \"sent_at\": \"2025-09-26T22:11:54.020064Z\"\n        }\n    ]\n}"
+						}
+					]
+				}
+			]
+		}
+	]
+}
