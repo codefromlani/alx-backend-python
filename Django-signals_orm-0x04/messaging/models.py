@@ -8,9 +8,31 @@ class Message(models.Model):
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     edited = models.BooleanField(default=False)
+    parent_message = models.ForeignKey(
+        "self",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="replies"
+    )
 
     def __str__(self):
+        if self.parent_message:
+            return f"Reply from {self.sender} to {self.receiver} (parent {self.parent_message.id})"
         return f"From {self.sender} to {self.receiver} at {self.timestamp}"
+
+    def get_thread(self):
+        """
+        Recursively fetch this message and all its replies in a nested dict.
+        """
+        return {
+            "id": self.id,
+            "sender": self.sender.username,
+            "receiver": self.receiver.username,
+            "content": self.content,
+            "timestamp": self.timestamp,
+            "replies": [reply.get_thread() for reply in self.replies.all()]
+        }
 
 
 class Notification(models.Model):
