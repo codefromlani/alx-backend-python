@@ -27,7 +27,7 @@ def threaded_messages(request):
 
 @login_required
 def unread_inbox(request):
-    unread_messages = Message.objects.filter(
-        receiver=request.user, read=False
-    ).only("id", "sender", "content", "timestamp")
+    unread_messages = Message.unread.unread_for_user(request.user).only(
+        "id", "sender", "content", "timestamp"
+    )
     return {"unread_messages": unread_messages}
