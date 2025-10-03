@@ -1,7 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.contrib.auth import logout
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
+from django.views.decorators.cache import cache_page
 from .models import Message
 
 
@@ -15,6 +16,7 @@ def delete_user(request):
 
 
 @login_required
+@cache_page(60)
 def threaded_messages(request):
     top_messages = (
         Message.objects.filter(sender=request.user, parent_message__isnull=True)
