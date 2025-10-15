@@ -1,0 +1,16 @@
+#!/bin/bash
+echo "Starting Minikube cluster..."
+
+# Ensure Docker is running
+if ! systemctl is-active --quiet docker; then
+    echo "Docker is not running. Starting Docker..."
+    sudo systemctl start docker
+fi
+
+minikube start
+
+echo "Verifying that the cluster is running..."
+kubectl cluster-info
+
+echo "Retrieving available pods..."
+kubectl get pods -A
