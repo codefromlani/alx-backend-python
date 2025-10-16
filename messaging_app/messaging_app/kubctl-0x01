@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Exit immediately if a command fails
+set -e
+
+echo "Scaling Django app deployment to 3 replicas..."
+kubectl scale deployment messaging-app-deployment --replicas=3
+
+echo "Verifying running pods..."
+kubectl get pods -l app=messaging-app
+
+echo "Starting load test using wrk (requires app to be accessible)..."
+echo "Example: wrk -t4 -c100 -d30s http://<minikube-ip>:8000/"
+echo "Run the above manually once you know your app's Minikube IP."
+
+echo "Monitoring resource usage..."
+kubectl top pods || echo "⚠️ Metrics server may not be installed. Run: minikube addons enable metrics-server"
