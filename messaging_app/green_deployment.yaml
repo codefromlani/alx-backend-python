@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: messaging-app-green
+  labels:
+    app: messaging-app
+    version: green
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: messaging-app
+      version: green
+  template:
+    metadata:
+      labels:
+        app: messaging-app
+        version: green
+    spec:
+      containers:
+        - name: messaging-app
+          image: messaging_app:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8000
+          command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+          env:
+            - name: DB_NAME
+              value: messaging_db
+            - name: DB_USER
+              value: root
+            - name: DB_PASSWORD
+              value: password
+            - name: DB_HOST
+              value: db
+            - name: DB_PORT
+              value: "3306"
