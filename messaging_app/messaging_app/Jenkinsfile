@@ -1,49 +1,66 @@
 pipeline {
-    agent any
+  agent {
+    // run all stages inside a Python container (has python3 & pip)
+    docker {
+      image 'python:3.10-slim'
+      // run as root inside the container so installs succeed
+      args '-u root:root'
+    }
+  }
 
-    environment {
-        VENV = 'venv'
+  environment {
+    VENV_DIR = 'venv'
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        git branch: 'main',
+            url: 'https://github.com/codefromlani/alx-backend-python.git',
+            credentialsId: 'github-creds'
+      }
     }
 
-    stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'main', url: 'https://github.com/codefromlani/alx-backend-python.git', credentialsId: 'github-creds'
-            }
-        }
-
-        stage('Setup Python Environment') {
-            steps {
-                sh '''
-                    apt-get update
-                    apt-get install -y python3 python3-venv python3-pip
-                    python3 -m venv ${VENV}
-                    . ${VENV}/bin/activate
-                    pip install --upgrade pip
-                    pip install -r messaging_app/requirements.txt
-                '''
-            }
-        }
-
-        stage('Run Tests') {
-            steps {
-                sh '''
-                    . ${VENV}/bin/activate
-                    pytest messaging_app/tests --junitxml=report.xml
-                '''
-            }
-        }
-
-        stage('Archive Report') {
-            steps {
-                junit 'report.xml'
-            }
-        }
+    stage('Prepare') {
+      steps {
+        sh '''
+          python3 -V
+          python3 -m venv ${VENV_DIR}
+          . ${VENV_DIR}/bin/activate
+          pip install --upgrade pip
+          pip install -r messaging_app/requirements.txt pytest pytest-html pytest-junitxml
+        '''
+      }
     }
 
-    post {
-        always {
-            echo 'Pipeline execution completed.'
-        }
+    stage('Run Tests') {
+      steps {
+        sh '''
+          . ${VENV_DIR}/bin/activate
+          # run tests; produce junit xml and html report
+          pytest messaging_app -q --junitxml=report.xml --html=report.html --self-contained-html || true
+        '''
+      }
     }
+
+    stage('Archive Reports') {
+      steps {
+        junit 'report.xml'                         // show results in Jenkins test-report UI
+        archiveArtifacts artifacts: 'report.html', fingerprint: true
+      }
+    }
+  }
+
+  post {
+    always {
+      echo "Pipeline finished. Attaching artifacts if any."
+      archiveArtifacts artifacts: 'report.html', allowEmptyArchive: true
+    }
+    success {
+      echo "Tests passed."
+    }
+    failure {
+      echo "Pipeline failed. Check console output and test results."
+    }
+  }
 }
