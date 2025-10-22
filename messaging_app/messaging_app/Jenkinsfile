@@ -28,7 +28,7 @@ pipeline {
           python3 -m venv ${VENV_DIR}
           . ${VENV_DIR}/bin/activate
           pip install --upgrade pip
-          pip install -r messaging_app/requirements.txt pytest pytest-html pytest-junitxml
+          pip install -r messaging_app/requirements.txt pytest pytest-html
         '''
       }
     }
