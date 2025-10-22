@@ -1,15 +1,15 @@
 pipeline {
   agent {
-    // run all stages inside a Python container (has python3 & pip)
     docker {
       image 'python:3.10-slim'
-      // run as root inside the container so installs succeed
       args '-u root:root'
     }
   }
 
   environment {
     VENV_DIR = 'venv'
+    REPORT_XML = 'report.xml'
+    REPORT_HTML = 'report.html'
   }
 
   stages {
@@ -37,25 +37,21 @@ pipeline {
       steps {
         sh '''
           . ${VENV_DIR}/bin/activate
-          # run tests; produce junit xml and html report
-          pytest messaging_app -q --junitxml=report.xml --html=report.html --self-contained-html || true
+          pytest messaging_app -q --junitxml=${REPORT_XML} --html=${REPORT_HTML} --self-contained-html || true
         '''
       }
     }
 
     stage('Archive Reports') {
       steps {
-        junit 'report.xml'                         // show results in Jenkins test-report UI
-        archiveArtifacts artifacts: 'report.html', fingerprint: true
+        // Make sure files exist where we expect them
+        junit "${REPORT_XML}"
+        archiveArtifacts artifacts: "${REPORT_HTML}", fingerprint: true
       }
     }
   }
 
   post {
-    always {
-      echo "Pipeline finished. Attaching artifacts if any."
-      archiveArtifacts artifacts: 'report.html', allowEmptyArchive: true
-    }
     success {
       echo "Tests passed."
     }
